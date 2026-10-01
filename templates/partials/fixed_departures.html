@@ -1,0 +1,55 @@
+<!-- ============ FIXED DEPARTURES ============ -->
+<section class="section" style="background: var(--bg-white);">
+  <div class="container">
+    <div class="section-head center mx-auto">
+      <h2>Fixed Departures</h2>
+      <p>Join a scheduled group departure and share the trail with fellow adventurers from around the world.</p>
+    </div>
+    
+    <div class="departure-table-wrapper">
+      <div class="departure-header">
+        <div>Trip Name</div>
+        <div>Start Date</div>
+        <div>End Date</div>
+        <div>Price</div>
+        <div>Status</div>
+      </div>
+
+      {% for departure in fixed_departures %}
+      <div class="departure-row">
+
+        <div class="trip-name">
+          <a href="">
+            {{ departure.package.name }}
+          </a>
+        </div>
+        
+
+        <div>{{ departure.start_date|date:"M d, Y" }}</div>
+        <div>{{ departure.end_date|date:"M d, Y" }}</div>
+        
+
+        <div>${{ departure.current_price|floatformat:0 }}</div>
+        
+
+        <div class="{% if departure.available_seats == 0 %}status-full{% elif departure.available_seats <= 3 %}status-limited{% else %}status-open{% endif %}">
+          {% if departure.available_seats == 0 %}
+            Fully Booked
+          {% elif departure.available_seats <= 3 %}
+            {{ departure.available_seats }} Seats Left
+          {% else %}
+            Available
+          {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <div class="departure-row">
+        <div class="text-center w-100 py-4 text-muted">
+          No fixed departures scheduled at the moment. Please check back later or contact us for a custom group.
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>

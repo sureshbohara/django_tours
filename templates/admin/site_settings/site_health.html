@@ -1,0 +1,173 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block title %}Site Health{% endblock %}
+
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}" class="text-decoration-none text-secondary">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Site Health</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header bg-custom text-light d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0 text-light">Site Health Dashboard</h6>
+    </div>
+    <div class="card-body bg-light p-2">
+        <div class="row">
+            <!-- Server Information -->
+            <div class="col-12 col-lg-6">
+                <div class="card shadow-none border h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-primary">Server Information</h6>
+                        <table class="table align-middle table-striped table-sm">
+                            <tbody>
+                                {% for key, value in server_info.items %}
+                                <tr>
+                                    <td class="fw-semibold">{{ key }}</td>
+                                    <td class="text-end">{{ value }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Directories and Health Status -->
+            <div class="col-12 col-lg-6">
+                <div class="card shadow-none border h-100 mb-3">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-primary">Directory Sizes</h6>
+                        <table class="table align-middle table-striped table-sm">
+                            <tbody>
+                                {% for dir, size in directories.items %}
+                                <tr>
+                                    <td class="fw-semibold">{{ dir }}</td>
+                                    <td class="text-end">{{ size }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card shadow-none border h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-primary">Health Status</h6>
+                        <table class="table align-middle table-striped table-sm">
+                            <tbody>
+                                {% for key, value in site_health_status.items %}
+                                <tr>
+                                    <td class="fw-semibold">{{ key }}</td>
+                                    <td class="text-end">
+                                        {% if value == 'Yes' or value == 'Connected' or value == 'All installed' %}
+                                            <span class="badge bg-success">{{ value }}</span>
+                                        {% elif value == 'No' or value == 'Failed' or 'Missing' in value %}
+                                            <span class="badge bg-danger">{{ value }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ value }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disk Space Chart -->
+            <div class="col-12 mt-4">
+                <div class="card shadow-none border h-100">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-primary">Disk Space Usage (Last 7 Days)</h6>
+                        <!-- ✅ CHANGE 1: canvas को सट्टा div प्रयोग गर्ने -->
+                        <div id="diskSpaceChart" style="min-height: 350px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- ✅ CHANGE 2: Chart.js को सट्टा ApexCharts CDN प्रयोग गर्ने -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chartData = {{ disk_chart_data.data|safe }};
+        const chartLabels = {{ disk_chart_data.labels|safe }};
+        
+        // Check if we have real data (not just zeros)
+        const hasRealData = chartData.some(value => value > 0);
+
+        if (hasRealData) {
+            // Bytes लाई GB मा convert गर्ने (Chart देखाउन सजिलो हुन)
+            const dataInGB = chartData.map(val => (val / (1024 * 1024 * 1024)).toFixed(2));
+
+            var options = {
+                series: [{
+                    name: 'Disk Usage',
+                    data: dataInGB
+                }],
+                chart: {
+                    type: 'area', // 'line' वा 'area' दुवै मिल्छ, area अलि राम्रो देखिन्छ
+                    height: 350,
+                    toolbar: { show: false },
+                    fontFamily: 'inherit'
+                },
+                colors: ['#36a2eb'], // तपाईंको पुरानो निलो रङ
+                dataLabels: { enabled: false },
+                stroke: { 
+                    curve: 'smooth', 
+                    width: 2 
+                },
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.05,
+                        stops: [0, 90, 100]
+                    }
+                },
+                xaxis: {
+                    categories: chartLabels,
+                    tooltip: { enabled: false }
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return value + " GB";
+                        }
+                    }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (value) {
+                            return value + " GB";
+                        }
+                    }
+                }
+            };
+
+            var chart = new ApexCharts(document.querySelector("#diskSpaceChart"), options);
+            chart.render();
+
+        } else {
+
+            document.getElementById('diskSpaceChart').innerHTML = 
+                '<div class="alert alert-info text-center mt-3">' +
+                '<i class="bi bi-info-circle me-2"></i> Disk usage data is being collected. It will appear here after a few days.' +
+                '</div>';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+django-admin startproject ez_tours .
+app create : python manage.py startapp banners,python manage.py startapp pages
+
+
+venv Activate
+.\venv\Scripts\activate
+
+
+User Creatte: python manage.py createsuperuser
+
+Create Templates or Static Folders 
+
+mkdir templates\admin\galleries && mkdir templates\admin\faqs
+mkdir templates\layouts
+mkdir templates\includes
+mkdir templates\accounts
+mkdir templates\core
+mkdir static\asset\css
+mkdir static\asset\js
+mkdir static\asset\images
+mkdir static\asset\plugins
+
+
+
+Create Empty Files 
+
+echo. > templates\layouts\base.html
+echo. > templates\includes\header.html
+echo. > templates\includes\sidebar.html
+echo. > templates\accounts\login.html
+echo. > templates\core\dashboard.html
+echo. > accounts\urls.py
+echo. > core\urls.py
+
+
+
+
+
+
+ Migration
+  python manage.py makemigrations
+
+Apply Database 
+  python manage.py migrate
+  
+Server Star
+python manage.py runserver
+
+
+python manage.py seed_categories
+python manage.py seed_pages
+python manage.py seed_packages
+python manage.py seed_teams
+python manage.py seed_services
+python manage.py seed_faqs
+python manage.py seed_reviews
+python manage.py seed_promocodes
+python manage.py seed_settings
+python manage.py seed_banner
+
+
+All Seeded Data Clear : python manage.py flush [Laravel : rollback]
+
+

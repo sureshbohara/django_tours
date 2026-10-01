@@ -1,0 +1,494 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block meta_title %}{{ package.meta_title|default:package.name }} - Moving Himalaya Adventure Travel{% endblock %}
+{% block meta_description %}{{ package.meta_description|default:package.excerpt }}{% endblock %}
+
+{% block content %}
+
+<!-- HERO BREADCRUMB SECTION -->
+<section class="hero-breadcrumb" style="background-image: url('{{ package.feature_image_url|default:package.image_url }}');">
+    <div class="overlay"></div>
+    <div class="breadcrumb-content">
+        <h1 class="page-title">{{ package.name }}</h1>
+        <p class="subtitle">{{ package.duration }} of Ultimate Himalayan Adventure</p>
+    </div>
+</section>
+
+<!-- INNER MENU -->
+<section class="inner_menu hidden-xs" id="single-content-navbar">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <ul class="navbar-nav mx-auto mobileDiv">
+                <li class="nav-item"><a class="nav-link scroll-link active" href="#highlights"><i class="bi bi-star-fill"></i> Highlights</a></li>
+                <li class="nav-item"><a class="nav-link scroll-link" href="#overview"><i class="bi bi-info-circle"></i> Overview</a></li>
+                <li class="nav-item"><a class="nav-link scroll-link" href="#itinerary"><i class="bi bi-map"></i> Itinerary</a></li>
+                <li class="nav-item"><a class="nav-link scroll-link" href="#included-excluded"><i class="bi bi-check-circle"></i> Included / Excluded</a></li>
+                <li class="nav-item"><a class="nav-link scroll-link" href="#equipment"><i class="bi bi-suitcase-lg"></i> Equipment</a></li>
+                <li class="nav-item"><a class="nav-link scroll-link" href="#faqs"><i class="bi bi-question-circle"></i> FAQs</a></li>
+                {% if package.gallery %}
+                <li class="nav-item"><a class="nav-link scroll-link" href="#gallery"><i class="bi bi-images"></i> Gallery</a></li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link scroll-link" href="#reviews"><i class="bi bi-chat-quote"></i> Reviews</a></li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<!-- PACKAGE DETAILS -->
+<section class="package_details">
+    <div class="container">
+        <div class="row">
+            <!-- MAIN CONTENT -->
+            <div class="col-lg-8">
+                
+                <!-- Highlights -->
+                <div id="highlights" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-star-fill"></i> Trip Highlights</h3>
+                        <p class="mb-4">{{ package.excerpt }}</p>
+
+                        <h4 class="mb-3 fw-bold" style="font-size: 18px">At a Glance</h4>
+                        <ul class="glance-grid mb-4">
+
+                            {% if package.duration %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-clock-history"></i></div><div class="text"><span class="info-title">Duration</span><span class="info">{{ package.duration }}</span></div></div></li>
+                            {% endif %}
+
+                            {% if package.transportation %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-airplane-fill"></i></div><div class="text"><span class="info-title">Transportation</span><span class="info">{{ package.transportation }}</span></div></div></li>
+                            {% endif %}
+
+                            {% if package.trip_grading %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-bar-chart-line-fill"></i></div><div class="text"><span class="info-title">Trip Grading</span><span class="info">{{ package.trip_grading }}</span></div></div></li>
+                            {% endif %}
+                            
+                            {% if package.max_altitude %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-compass-fill"></i></div><div class="text"><span class="info-title">Max. Elevation</span><span class="info">{{ package.max_altitude }}</span></div></div></li>
+                            {% endif %}
+                            
+                            {% if package.accommodation %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-house-door-fill"></i></div><div class="text"><span class="info-title">Accommodation</span><span class="info">{{ package.accommodation }}</span></div></div></li>
+                            {% endif %}
+
+                            {% if package.best_season %}
+                            <li><div class="item_list"><div class="icon"><i class="bi bi-sun-fill"></i></div><div class="text"><span class="info-title">Best Season</span><span class="info">{{ package.best_season }}</span></div></div></li>
+                            {% endif %}
+
+                        </ul>
+
+                        {% if package.highlight_key %}
+                        <h4 class="mb-3 fw-bold" style="font-size: 18px">Key Highlights</h4>
+                        <ul class="list-unstyled">
+                            {% for highlight in package.highlight_key %}
+                            <li class="d-flex align-items-start mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i> {{ highlight.content|default:highlight }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Overview -->
+                <div id="overview" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-info-circle"></i> Trip Overview</h3>
+                        <div style="text-align: justify; line-height: 1.8">
+                            {{ package.content|safe|default:"Detailed overview of the trip will appear here." }}
+                        </div>
+                    </div>                
+                </div>
+
+                <!-- Itinerary -->
+                <div id="itinerary" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-map"></i> Trip Itinerary</h3>
+                        <div class="accordion accordion-itinerary" id="itineraryAccordion">
+                            {% for step in package.itinerary_data %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ forloop.counter0 }}">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter0 }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="collapse{{ forloop.counter0 }}">
+                                        Day {{ forloop.counter }} : {{ step.name|default:"Trip Details" }}
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ forloop.counter0 }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ forloop.counter0 }}" data-bs-parent="#itineraryAccordion">
+                                    <div class="accordion-body">
+                                        {{ step.content|linebreaks|safe }}
+                                        
+                                        {% if step.duration or step.accommodation or step.max_elevation or step.meals %}
+                                        <ul class="list-unstyled mt-3 mb-0 small text-muted border-top pt-2">
+                                            {% if step.duration %}<li class="mb-1"><strong>Duration:</strong> {{ step.duration }}</li>{% endif %}
+                                            {% if step.max_elevation %}<li class="mb-1"><strong>Max Elevation:</strong> {{ step.max_elevation }}</li>{% endif %}
+                                            {% if step.meals %}<li class="mb-1"><strong>Meals:</strong> {{ step.meals }}</li>{% endif %}
+                                            {% if step.accommodation %}<li class="mb-1"><strong>Accommodation:</strong> {{ step.accommodation }}</li>{% endif %}
+                                        </ul>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">Itinerary details will be updated soon.</p>
+                            {% endfor %}
+                        </div>
+                    </div>                
+                </div>
+
+                <!-- Note Section -->
+                <div class="detail-notice">
+                    <h4 class="heading-sm mb-2"><i class="bi bi-lightbulb-fill" style="color: #f59e0b"></i> Customizable Trip</h4>
+                    <p class="mb-3">If you have a private group and prefer a personalized experience, we can organize a custom trip tailored to your requirements and group size, running it any day you choose.</p>
+                    <a href="#" class="btn btn-solid">Plan a Private Trip</a>
+                </div>
+
+                <!-- Included / Excluded -->
+                <div id="included-excluded" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-check-circle"></i> Inclusions & Exclusions</h3>
+                        <div class="inclusion-grid">
+                            <div class="inclusion-box included">
+                                <h4><i class="bi bi-check-circle-fill"></i> Included in Trip</h4>
+                                <ul class="custom-list included-list">
+                                    {% for inc in package.included_data %}
+                                    <li><i class="bi bi-check-lg"></i> {{ inc.content|default:inc }}</li>
+                                    {% empty %}
+                                    <li><i class="bi bi-dash"></i> No inclusions listed yet.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="inclusion-box excluded">
+                                <h4><i class="bi bi-x-circle-fill"></i> Excluded in Trip</h4>
+                                <ul class="custom-list excluded-list">
+                                    {% for exc in package.excluded_data %}
+                                    <li><i class="bi bi-x-lg"></i> {{ exc.content|default:exc }}</li>
+                                    {% empty %}
+                                    <li><i class="bi bi-dash"></i> No exclusions listed yet.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment -->
+                <div id="equipment" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-suitcase-lg"></i> Recommended Equipment</h3>
+                        <p class="mb-4">Below is a recommended list of gear. Most items can be purchased or rented in Kathmandu.</p>
+                        <div class="gear-grid">
+                            {% if package.general %}
+                            <div class="gear-brand">
+                                <h4><span>🧳</span> General</h4>
+                                <ul class="products_list">
+                                    {% for eq in package.general %}<li><i class="bi bi-check-circle-fill"></i><span>{{ eq.content|default:eq }}</span></li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                            
+                            {% if package.lower_body %}
+                            <div class="gear-brand">
+                                <h4><span>👖</span> Lower Body</h4>
+                                <ul class="products_list">
+                                    {% for eq in package.lower_body %}<li><i class="bi bi-check-circle-fill"></i><span>{{ eq.content|default:eq }}</span></li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            {% if package.upper_body %}
+                            <div class="gear-brand">
+                                <h4><span>👕</span> Upper Body</h4>
+                                <ul class="products_list">
+                                    {% for eq in package.upper_body %}<li><i class="bi bi-check-circle-fill"></i><span>{{ eq.content|default:eq }}</span></li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            {% if package.footwear %}
+                            <div class="gear-brand">
+                                <h4><span>👟</span> Footwear</h4>
+                                <ul class="products_list">
+                                    {% for eq in package.footwear %}<li><i class="bi bi-check-circle-fill"></i><span>{{ eq.content|default:eq }}</span></li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+
+                            {% if package.accessories %}
+                            <div class="gear-brand">
+                                <h4><span>🎒</span> Accessories</h4>
+                                <ul class="products_list">
+                                    {% for eq in package.accessories %}<li><i class="bi bi-check-circle-fill"></i><span>{{ eq.content|default:eq }}</span></li>{% endfor %}
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQs -->
+                <div id="faqs" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-question-circle"></i> Trip FAQ's</h3>
+                        <div class="accordion accordion-itinerary" id="faqAccordion">
+                            {% for faq in package.faqs %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="faqHeading{{ forloop.counter0 }}">
+                                    <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse{{ forloop.counter0 }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" aria-controls="faqCollapse{{ forloop.counter0 }}">
+                                        {{ faq.label }}
+                                    </button>
+                                </h2>
+                                <div id="faqCollapse{{ forloop.counter0 }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="faqHeading{{ forloop.counter0 }}" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">{{ faq.detail|linebreaks|safe }}</div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No FAQs available for this package yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gallery -->
+                {% if package.gallery %}
+                <div id="gallery" class="page-scroll">
+                    <div class="content-card">
+                        <h3 class="sub_title"><i class="bi bi-images"></i> Travel Gallery</h3>
+                        <div class="row gallery-grid g-3 mb-3">
+                            {% for img in package.gallery %}
+                            <div class="col-md-4 col-sm-6">
+                                <a href="/media/{{ img }}" class="gallery-item" data-caption="{{ package.name }}">
+                                    <div class="img-wrapper">
+                                        <img src="/media/{{ img }}" alt="{{ package.name }}" class="img-fluid">
+                                    </div>
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Reviews -->
+                <div id="reviews" class="page-scroll">
+                    <div class="content-card">
+                        <div class="review-header d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="sub_title mb-0" style="border: none; padding: 0">
+                                <i class="bi bi-chat-quote"></i> Traveler Reviews 
+                                <span class="badge bg-primary ms-2">{{ review_count }}</span>
+                            </h3>
+                            <button class="btn btn-solid btn-sm" data-bs-toggle="modal" data-bs-target="#commentModal">Write a Review</button>
+                        </div>
+                        
+                        <!-- Average Rating Display -->
+                        {% if avg_rating > 0 %}
+                        <div class="d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded">
+                            <div class="display-5 fw-bold text-warning">{{ avg_rating }}</div>
+                            <div>
+                                <div class="text-warning mb-1">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= avg_rating %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">Based on {{ review_count }} reviews</small>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Dynamic Reviews Loop -->
+                        {% for review in reviews %}
+                        <div class="review-item d-flex align-items-start mb-3">
+                            <div class="review-avatar me-3">{{ review.name|slice:":2"|upper }}</div>
+                            <div class="review-content flex-grow-1">
+                                <div class="review-header d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <h5 class="reviewer-name mb-0">{{ review.name }}</h5>
+                                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                    <div class="review-rating text-warning">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="bi bi-star-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <p class="review-text mb-0">"{{ review.comment }}"</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-4 text-muted">
+                            <i class="bi bi-chat-square-dots" style="font-size: 3rem;"></i>
+                            <p class="mt-2">No reviews yet. Be the first to share your experience!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SIDEBAR -->
+            <aside class="col-lg-4">
+                <div class="sidebar-price-card" id="info-bar">
+                    <header class="sidebar-price-header">
+                        <div class="sidebar-price-info">
+                            <span class="price-label">Starting Price</span>
+                            <div class="price-wrapper">
+                                {% if package.trip_price %}
+                                    <span class="sidebar-discounted-price">€{{ package.trip_price }} <span>/ Per Person</span></span>
+                                {% else %}
+                                    <span class="sidebar-discounted-price">On Request</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </header>
+
+                    {% if package.group_size_price %}
+                    <section class="group-pricing-section">
+                        <h4 class="sidebar-mini-title">Group Pricing</h4>
+                        <div class="price-table-wrapper">
+                            <table class="custom-price-table">
+                                <tbody>
+                                    {% for group in package.group_size_price %}
+                                    <tr>
+                                        <td class="label-col">{{ group.size|default:group.label }}</td>
+                                        <td class="price-col">€{{ group.price }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                    {% endif %}
+
+                    <section class="why-book-section">
+                        <h4 class="sidebar-mini-title">Why Book With Us?</h4>
+                        <ul class="benefits-list">
+                            <li><i class="bi bi-shield-check"></i><span>Book with 100% Confidence</span></li>
+                            <li><i class="bi bi-credit-card-2-front"></i><span>Secure & Flexible Payments</span></li>
+                            <li><i class="bi bi-lightning-charge"></i><span>Instant Booking Confirmation</span></li>
+                            <li><i class="bi bi-headset"></i><span>24/7 Dedicated Customer Support</span></li>
+                        </ul>
+
+                        <div class="sidebar-cta-group">
+                            <a href="#" class="btn btn-solid">
+                                <i class="bi bi-calendar-check me-2"></i> Book This Trip Now
+                            </a>
+                            <a href="#" class="btn btn-outline-dark">
+                                <i class="bi bi-file-earmark-arrow-down me-2"></i> Download PDF Itinerary
+                            </a>
+                        </div>
+                    </section>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<!-- Review Modal -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Write a Review for {{ package.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="packageReviewSubmit" method="POST" action="{% url 'package_reviews:submit_review' package.id %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="form-group col-lg-6 mb-3">
+                            <label for="name">Full Name</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="form-group col-lg-6 mb-3">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" name="email" required>
+                        </div>
+                        <div class="form-group col-lg-6 mb-3">
+                            <label for="rating">Rating (1-5)</label>
+                            <input type="number" class="form-control" name="rating" min="1" max="5" required>
+                        </div>
+                        <div class="form-group col-lg-12 mb-3">
+                            <label for="review">Your Review</label>
+                            <textarea name="review" class="form-control" rows="4" placeholder="Tell us about your experience..." required></textarea>
+                        </div>
+                        <div class="col-lg-12">
+                            <button type="submit" class="btn btn-solid w-100" id="submitButton">Submit Review</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 1. Active Scroll Link Script
+    const sections = document.querySelectorAll(".page-scroll");
+    const navLinks = document.querySelectorAll(".inner_menu .nav-link");
+
+    window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((section) => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 120) {
+                current = section.getAttribute("id");
+            }
+        });
+        navLinks.forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href").includes(current)) {
+                link.classList.add("active");
+            }
+        });
+    });
+
+    // 2. Review Form AJAX Submission
+    document.getElementById('packageReviewSubmit').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = document.getElementById('submitButton');
+        const originalText = submitBtn.innerHTML;
+        
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success) {
+                alert(data.message);
+                bootstrap.Modal.getInstance(document.getElementById('commentModal')).hide();
+                this.reset();
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('Something went wrong! Please try again.');
+            console.error(error);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    });
+</script>
+{% endblock %}

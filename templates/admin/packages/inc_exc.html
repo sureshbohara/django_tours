@@ -1,0 +1,84 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Inclusions & Exclusions - {{ item.name }}{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'packages:package_list' %}">Packages</a></li>
+            <li class="breadcrumb-item active">Inc/Exc</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0">Features For: {{ item.name }}</h6>
+        <a class="btn btn-light btn-sm" href="{% url 'packages:package_list' %}"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <form id="incExcForm" action="{% url 'packages:package_inc_exc' item.id %}" method="POST">
+            {% csrf_token %}
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-success">
+                        <div class="card-header bg-success bg-opacity-10 text-success"><h6 class="mb-0">✅ Inclusions</h6></div>
+                        <div class="card-body">
+                            <div class="includedDisplay">
+                                {% for inc in item.included_data %}
+                                    <div class="row mb-2 inc-item">
+                                        <div class="col-10"><input type="text" name="included_content[]" class="form-control form-control-sm" value="{{ inc.content }}" placeholder="What's included?"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeInc"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-success addInc mt-2"><i class="bi bi-plus-circle"></i> Add Inclusion</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-danger">
+                        <div class="card-header bg-danger bg-opacity-10 text-white"><h6 class="mb-0">❌ Exclusions</h6></div>
+                        <div class="card-body">
+                            <div class="excludedDisplay">
+                                {% for exc in item.excluded_data %}
+                                    <div class="row mb-2 exc-item">
+                                        <div class="col-10"><input type="text" name="excluded_content[]" class="form-control form-control-sm" value="{{ exc.content }}" placeholder="What's excluded?"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeExc"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger addExc mt-2"><i class="bi bi-plus-circle"></i> Add Exclusion</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="bi bi-save"></i> Update Features</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $('.addInc').click(() => $('.includedDisplay').append(`<div class="row mb-2 inc-item"><div class="col-10"><input type="text" name="included_content[]" class="form-control form-control-sm" placeholder="What's included?"></div><div class="col-2"><button type="button" class="btn btn-danger btn-sm removeInc"><i class="bi bi-trash"></i></button></div></div>`));
+    $(document).on('click', '.removeInc', function() { $(this).closest('.inc-item').remove(); });
+
+    $('.addExc').click(() => $('.excludedDisplay').append(`<div class="row mb-2 exc-item"><div class="col-10"><input type="text" name="excluded_content[]" class="form-control form-control-sm" placeholder="What's excluded?"></div><div class="col-2"><button type="button" class="btn btn-danger btn-sm removeExc"><i class="bi bi-trash"></i></button></div></div>`));
+    $(document).on('click', '.removeExc', function() { $(this).closest('.exc-item').remove(); });
+
+    $('#incExcForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Processing...');
+        $.ajax({
+            type: 'POST', url: $(this).attr('action'), data: formData, contentType: false, processData: false,
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: (res) => { if(res.success) { toastr.success(res.message); setTimeout(() => location.reload(), 1000); } },
+            error: () => { submitBtn.prop('disabled', false).html('<i class="bi bi-save"></i> Update Features'); toastr.error('Error'); }
+        });
+    });
+</script>
+{% endblock %}

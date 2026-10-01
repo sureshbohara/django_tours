@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Fixed Departures{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active">Fixed Departures</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0"> Fixed Departures</h6>
+        <a href="{% url 'packages:fixed_departure_add' %}" class="btn btn-light btn-sm"><i class="bi bi-plus-lg"></i> Add Departure</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>Package</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th>Seats</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dep in items %}
+                    <tr>
+                        <td><strong>{{ dep.package.name }}</strong></td>
+                        <td>{{ dep.start_date }}</td>
+                        <td>{{ dep.end_date }}</td>
+                        <td>${{ dep.discount_price|default:"-" }}</td>
+                        <td>{{ dep.booked_seats }}/{{ dep.max_seats }}</td>
+                        <td>
+                            <select class="form-select form-select-sm dep-status" data-id="{{ dep.id }}" style="width: 120px;">
+                                <option value="active" {% if dep.status == 'active' %}selected{% endif %}>✅ Active</option>
+                                <option value="cancelled" {% if dep.status == 'cancelled' %}selected{% endif %}>❌ Cancelled</option>
+                                <option value="completed" {% if dep.status == 'completed' %}selected{% endif %}>✔️ Completed</option>
+                            </select>
+                        </td>
+                        <td>
+                            <form action="{% url 'packages:fixed_departure_delete' dep.id %}" method="POST" id="deleteDep{{ dep.id }}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete(event, 'deleteDep{{ dep.id }}')"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center py-4 text-muted">No departures found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $(document).on('change', '.dep-status', function() {
+        const select = $(this);
+        const id = select.data('id');
+        const status = select.val();
+        $.ajax({
+            type: 'POST', url: "{% url 'packages:fixed_departure_status' %}",
+            data: { id: id, status: status },
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: (res) => { if(res.status===200) toastr.success(res.msg); },
+            error: () => toastr.error('Error')
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,64 @@
+<!-- ============ RECOMMENDED EXPEDITIONS  ============ -->
+<section class="section" style="background: var(--bg-white);">
+  <div class="container">
+    <div class="section-head center mx-auto">
+      <h2>Recommended Nepal Trekking</h2>
+      <p>Hand-picked adventures for unforgettable experiences, guided by local professionals.</p>
+    </div>
+    
+    <div class="expedition-grid">
+      {% for package in recommended_packages %}
+      <article class="expedition-card">
+        <div class="expedition-img">
+            <img src="{{ package.image_url }}" alt="{{ package.name }}">
+        </div>
+        <div class="expedition-body">
+          <div class="expedition-rating">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <span>(Reviews)</span>
+          </div>
+          <h3 class="expedition-title">{{ package.name }}</h3>
+          <div class="expedition-meta">
+
+            {% if package.max_altitude %}
+            <span class="meta-item"><i class="bi bi-arrows-fullscreen"></i> Max. Elev: {{ package.max_altitude }}</span>
+            {% endif %}
+
+            {% if package.best_season %}
+            <span class="meta-item"><i class="bi bi-calendar-event"></i> Season: {{ package.best_season }}</span>
+            {% endif %}
+
+            {% if package.duration %}
+            <span class="meta-item"><i class="bi bi-clock"></i> Duration: {{ package.duration }}</span>
+            {% endif %}
+
+            {% if package.trip_grading %}
+            <span class="meta-item"><i class="bi bi-bar-chart-line"></i> Grading: {{ package.trip_grading }}</span>
+            {% endif %}
+
+          </div>
+          <div class="expedition-footer">
+            <div>
+                <span class="price-label">Starting from</span>
+                <span class="new-price">
+                    ${{ package.trip_price|default:"0" }} 
+
+                    {% if package.trip_previous_price %}
+                        <span class="old-price">${{ package.trip_previous_price }}</span>
+                    {% endif %}
+
+                </span>
+            </div>
+           
+            <a href="{% url 'front:package_detail' package.slug %}" class="btn-ghost" style="padding:9px 16px;font-size:12px;">Details</a>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+
+      <p class="text-center text-muted w-100">No recommended packages available at the moment. Please check back later.</p>
+      {% endfor %}
+    </div>
+    
+  </div>
+</section>

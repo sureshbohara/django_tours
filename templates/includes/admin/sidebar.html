@@ -1,0 +1,116 @@
+{% load static %}
+<aside class="sidebar-wrapper" data-simplebar="true">
+    <div class="sidebar-header d-flex align-items-center p-3 border-bottom">
+        <div>
+            <img src="{% static 'asset/images/website.png' %}" class="logo-icon" alt="Logo">
+        </div>
+        <div class="ms-2">
+            <h4 class="logo-text mb-0">TOURS DASH</h4>
+        </div>
+        <div class="toggle-icon ms-auto">
+            <i class="bi bi-chevron-double-left"></i>
+        </div>
+    </div>
+
+    <ul class="metismenu" id="menu">
+        <li class="mm-active">
+            <a href="{% url 'core:dashboard' %}">
+                <div class="parent-icon"><i class="bi bi-speedometer2"></i></div>
+                <div class="menu-title">Dashboard</div>
+            </a>
+        </li>
+
+        <li class="menu-label">Tour & Travel</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bi bi-globe-americas"></i></div>
+                <div class="menu-title">Trip Manager</div>
+            </a>
+            <ul>
+                <li><a href="{% url 'categories:category_list' %}"><i class="bi bi-tags"></i> Categories</a></li>
+                <li><a href="{% url 'packages:package_list' %}"><i class="bi bi-suitcase-lg"></i> Trip Packages</a></li>
+                <li><a href="{% url 'packages:fixed_departure_list' %}"><i class="bi bi-calendar-event"></i> Fixed
+                        Departures</a></li>
+                <li><a href="{% url 'packages:package_prices' %}"><i class="bi bi-currency-dollar"></i> Trip Pricing</a>
+                </li>
+                <li><a href="{% url 'assignments:assignment_list' %}"><i class="bi bi-clipboard-check"></i> Trip
+                        Assignments</a></li>
+            </ul>
+        </li>
+
+
+        <li class="menu-label">Content Management</li>
+
+        <li>
+            <a href="{% url 'pages:page_list' %}">
+                <div class="parent-icon"><i class="bi bi-file-earmark-text"></i></div>
+                <div class="menu-title">Cms Pages</div>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'blogs:post_list' %}">
+                <div class="parent-icon"><i class="bi bi-newspaper"></i></div>
+                <div class="menu-title">Blog Posts</div>
+            </a>
+        </li>
+
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bi bi-grid-3x3-gap"></i></div>
+                <div class="menu-title">Site Elements</div>
+            </a>
+            <ul>
+                <li><a href="{% url 'banners:banner_list' %}"><i class="bi bi-card-image"></i> Banners</a></li>
+                <li><a href="{% url 'faqs:faq_list' %}"><i class="bi bi-question-circle"></i> FAQs</a></li>
+                <li><a href="{% url 'reviews:review_list' %}"><i class="bi bi-star-half"></i> Reviews</a></li>
+                <li><a href="{% url 'galleries:gallery_list' %}"><i class="bi bi-images"></i> Gallery</a></li>
+                <li><a href="{% url 'teams:team_list' %}"><i class="bi bi-people"></i> Team Members</a></li>
+                <li><a href="{% url 'services:service_list' %}"><i class="bi bi-wrench-adjustable"></i> Services</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu-label">Marketing</li>
+        <li>
+            <a href="{% url 'newsletters:subscriber_list' %}">
+                <div class="parent-icon"><i class="bi bi-envelope-paper"></i></div>
+                <div class="menu-title">Email Marketing</div>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'promos:promo_list' %}">
+                <div class="parent-icon"><i class="bi bi-ticket-perforated"></i></div>
+                <div class="menu-title">Promo Codes</div>
+            </a>
+        </li>
+
+        <li class="menu-label">System</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bi bi-gear-wide-connected"></i></div>
+                <div class="menu-title">Settings</div>
+            </a>
+            <ul>
+                <li><a href="{% url 'settings:settings' %}"><i class="bi bi-sliders"></i> General Settings</a></li>
+                <li><a href="{% url 'settings:site_health' %}"><i class="bi bi-heart-pulse"></i> System Health</a></li>
+                <li><a href="{% url 'login_activities:list' %}"><i class="bi bi-clock-history"></i> Login Activities</a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="menu-label">Administration</li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class="bi bi-shield-lock"></i></div>
+                <div class="menu-title">User Management</div>
+            </a>
+            <ul>
+                <li><a href="{% url 'accounts:admin_user_list' %}"><i class="bi bi-person-badge"></i> Admin Users</a>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+</aside>

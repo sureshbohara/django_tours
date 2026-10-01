@@ -1,0 +1,38 @@
+<!-- ============ WHY CHOOSE ============ -->
+<section class="why-choose-section">
+  <div class="why-choose-row">
+    
+
+    <div class="why-choose-left" style="background-image:url('{{ setting.image1.url}}');">
+      <div class="experience-badge">
+        <span class="exp-number">15+</span>
+        <span class="exp-text">Years of Experience</span>
+      </div>
+    </div>
+
+
+    <div class="why-choose-right">
+      <div class="section-head">
+        <h2>{{ setting.process_title|default:"Adventure handled with care, from Kathmandu to the summit" }}</h2>
+        <p>{{ setting.process_sub_title|default:"We are a team of mountain people — born, raised, and trained in the Himalayas." }}</p>
+      </div>
+      
+      <div class="feature-grid-new">
+        {% for item in setting.process_item %}
+        <div class="feature-card-box">
+          <div class="feature-icon">
+            <i class="{{ item.icon }}"></i>
+          </div>
+          <h4>{{ item.title }}</h4>
+          <p>{{ item.content }}</p>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+          <p>Features will appear here once configured in the Admin Panel.</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>

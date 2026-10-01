@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Equipment - {{ item.name }}{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'packages:package_list' %}">Packages</a></li>
+            <li class="breadcrumb-item active">Equipment</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0">Equipment For: {{ item.name }}</h6>
+        <a href="{% url 'packages:package_list' %}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <form id="equipmentForm" action="{% url 'packages:package_equipment' item.id %}" method="POST">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-none border">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">General</h6>
+                            <div class="display-equipment1">
+                                {% for eq in item.general %}
+                                    <div class="row mb-2 equipment-step">
+                                        <div class="col-10"><input type="text" class="form-control form-control-sm" name="equipment1[]" value="{{ eq.content }}"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 addEquipment" data-input="equipment1"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-none border">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">Lower Body</h6>
+                            <div class="display-equipment2">
+                                {% for eq in item.lower_body %}
+                                    <div class="row mb-2 equipment-step">
+                                        <div class="col-10"><input type="text" class="form-control form-control-sm" name="equipment2[]" value="{{ eq.content }}"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 addEquipment" data-input="equipment2"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-none border">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">Upper Body</h6>
+                            <div class="display-equipment3">
+                                {% for eq in item.upper_body %}
+                                    <div class="row mb-2 equipment-step">
+                                        <div class="col-10"><input type="text" class="form-control form-control-sm" name="equipment3[]" value="{{ eq.content }}"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 addEquipment" data-input="equipment3"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-none border">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">Footwear</h6>
+                            <div class="display-equipment4">
+                                {% for eq in item.footwear %}
+                                    <div class="row mb-2 equipment-step">
+                                        <div class="col-10"><input type="text" class="form-control form-control-sm" name="equipment4[]" value="{{ eq.content }}"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 addEquipment" data-input="equipment4"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-none border">
+                        <div class="card-body">
+                            <h6 class="card-title text-primary">Accessories</h6>
+                            <div class="display-equipment5">
+                                {% for eq in item.accessories %}
+                                    <div class="row mb-2 equipment-step">
+                                        <div class="col-10"><input type="text" class="form-control form-control-sm" name="equipment5[]" value="{{ eq.content }}"></div>
+                                        <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2 addEquipment" data-input="equipment5"><i class="bi bi-plus-circle"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="bi bi-save"></i> Update Equipment</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $('.addEquipment').click(function() {
+        let input = $(this).data('input');
+        $(`.display-${input}`).append(`<div class="row mb-2 equipment-step"><div class="col-10"><input type="text" class="form-control form-control-sm" name="${input}[]"></div><div class="col-2"><button type="button" class="btn btn-danger btn-sm removeEquipmentStep"><i class="bi bi-trash"></i></button></div></div>`);
+    });
+    $(document).on('click', '.removeEquipmentStep', function() { $(this).closest('.equipment-step').remove(); });
+
+    $('#equipmentForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Processing...');
+        $.ajax({
+            type: 'POST', url: $(this).attr('action'), data: formData, contentType: false, processData: false,
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: (res) => { if(res.success) { toastr.success(res.message); setTimeout(() => location.reload(), 1000); } },
+            error: () => { submitBtn.prop('disabled', false).html('<i class="bi bi-save"></i> Update Equipment'); toastr.error('Error'); }
+        });
+    });
+</script>
+{% endblock %}

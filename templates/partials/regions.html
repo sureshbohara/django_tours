@@ -1,0 +1,56 @@
+<!-- ============  Regions ============ -->
+<section class="section trip-category-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end flex-wrap gap-3">
+            <div class="section-head" style="margin-bottom: 0">
+                <h2>Explore Regions</h2>
+            </div>
+
+            <div class="trip-nav-row">
+                <div class="trip-nav-btn trip-nav-prev"><i class="bi bi-chevron-left"></i></div>
+                <div class="trip-nav-btn trip-nav-next"><i class="bi bi-chevron-right"></i></div>
+            </div>
+        </div>
+
+        <div class="swiper trip-category-swiper">
+            <div class="swiper-wrapper">
+
+                {% for region in regions %}
+                <div class="swiper-slide">
+                    <div class="trip-category-card">
+             
+                         <img 
+                            src="{{ region.image_url }}" 
+                            class="card-bg-img" 
+                            alt="{{ region.name }}" 
+                        />
+                        <div class="card-content">
+                            <div>
+                                <h3 class="card-title">{{ region.name }}</h3>
+                                <p class="card-text">
+                                    {{ region.excerpt|truncatewords:20|default:"Explore the beautiful trails and culture of this region." }}
+                                </p>
+                            </div>
+                    
+                            <a href="{% url 'front:category_packages' slug=region.slug %}" class="card-action">
+                                View Treks <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+              
+                <div class="swiper-slide">
+                    <div class="trip-category-card">
+                        <div class="card-content text-center p-4">
+                            <h3 class="card-title">No Regions Found</h3>
+                            <p class="card-text">Please add regions from the Admin Panel.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+</section>

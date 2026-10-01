@@ -1,0 +1,100 @@
+{% load static %}
+<!-- ============ TOP BAR ============ -->
+<div class="top-bar hidden-xs">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="top-line">
+      {% if setting.address %}
+        <span><i class="bi bi-geo-alt"></i> {{ setting.address }}</span>
+      {% endif %}
+      {% if setting.email %}
+        <a href="mailto:{{ setting.email }}"><i class="bi bi-envelope"></i> {{ setting.email }}</a>
+      {% endif %}
+      {% if setting.phone %}
+        <a href="tel:{{ setting.phone|cut:' ' }}"><i class="bi bi-telephone-fill"></i> {{ setting.phone }}</a>
+      {% endif %}
+    </div>
+
+    <div class="top-social">
+      {% if setting.facebook %}<a href="{{ setting.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>{% endif %}
+      {% if setting.instagram %}<a href="{{ setting.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>{% endif %}
+      {% if setting.youtube %}<a href="{{ setting.youtube }}" target="_blank"><i class="bi bi-youtube"></i></a>{% endif %}
+      {% if setting.twitter %}<a href="{{ setting.twitter }}" target="_blank"><i class="bi bi-tiktok"></i></a>{% endif %}
+    </div>
+  </div>
+</div>
+
+
+<header class="main-header">
+  <div class="container">
+     <a href="{% url 'front:home' %}" class="logo">
+      {% if setting.logo %}
+         <img src="{{ setting.logo.url }}" alt="{{ setting.system_name|default:'Moving Himalaya' }} logo">
+      {% else %}
+        <img src="{% static 'asset/images/noimage.png' %}" alt="Logo">
+      {% endif %}
+    </a>
+
+    <ul class="primary-nav">
+      <li><a href="{% url 'front:home' %}" class="nav-link-custom active">Home</a></li>
+
+
+      {% for category in global_categories %}
+        {% if category.children.exists %}
+        <li class="nav-item-mega">
+            <a href="{% url 'front:category_packages' slug=category.slug %}" class="nav-link-custom" aria-haspopup="true" aria-expanded="false">
+                {{ category.name }} <i class="bi bi-chevron-down"></i>
+            </a>
+            <div class="mega-menu-wrapper">
+                <div class="mega-menu-inner">  
+                    
+                    {% for sub in category.children.all|slice:":4" %}
+                    <div class="mega-col">
+                        <h4 class="mega-header">
+                            <a href="{% url 'front:category_packages' slug=sub.slug %}">{{ sub.name }}</a>
+                        </h4>
+                        <ul class="mega-list">
+                            {% for pkg in sub.packages.all|slice:":5" %}
+                            <li>
+    
+                                <a class="mega-link" href="{% url 'front:package_detail' slug=pkg.slug %}">
+                                    <i class="bi bi-chevron-right"></i> {{ pkg.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+        </li>
+        {% endif %}
+      {% endfor %}
+
+
+      <li class="nav-item-simple">
+        <a href="#" class="nav-link-custom" aria-haspopup="true" aria-expanded="false">Company <i class="bi bi-chevron-down"></i></a>
+        <ul class="simple-dropdown-menu">
+          <li><a class="simple-dropdown-link" href="{% url 'front:about' %}">About Us</a></li>
+          <li><a class="simple-dropdown-link" href="{% url 'front:home' %}#blogs">Travel Blog</a></li>
+          <li><a class="simple-dropdown-link" href="{% url 'front:contact' %}">Contact</a></li>
+        </ul>
+      </li>
+      
+    
+      <li><a href="{% url 'front:contact' %}" class="nav-link-custom">Contact</a></li>
+    </ul>
+
+    <div class="d-flex align-items-center gap-2">
+      {% if setting.phone %}
+        <a href="tel:{{ setting.phone|cut:' ' }}" class="btn-brand visible-xs" style="padding:11px 14px;" aria-label="Call us"><i class="bi bi-telephone-fill"></i></a>
+      {% endif %}
+
+      <a href="{% url 'front:contact' %}" class="btn-brand d-none d-lg-inline-flex">Customize Trip</a>
+
+      <button class="menu-trigger-btn visible-xs" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+        <span class="bar-icon"><span></span><span></span><span></span></span> Menu
+      </button>
+    </div>
+  </div>
+</header>

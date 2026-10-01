@@ -1,0 +1,27 @@
+{% extends 'layouts/main.html' %}
+
+{% block meta_title %} Home - Moving Himalaya Adventure Travel {% endblock %}
+{% block meta_description %}Explore amazing tours, trips, and travel packages with Moving Himalaya Adventure Travel.{% endblock %}
+{% block meta_keywords %} travel, tours, adventure, Himalaya, packages {% endblock %}
+{% block meta_robots %}index, follow{% endblock %}
+
+{% block content %}
+    {% include 'partials/banner.html' %}
+    {% include 'partials/info.html' %}
+    {% include 'partials/para.html' %}
+    {% include 'partials/regions.html' %}
+    {% include 'partials/package_one.html' %}
+    {% include 'partials/package_two.html' %}
+    {% include 'partials/fixed_departures.html' %}
+    {% include 'partials/why_choose.html' %}
+    {% include 'partials/testimonials.html' %}
+    {% include 'partials/blogs.html' %}
+    {% include 'partials/partners.html' %}
+    {% include 'partials/newsletter.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    console.log("Home page loaded!");
+</script>
+{% endblock %}

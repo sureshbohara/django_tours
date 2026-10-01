@@ -1,0 +1,116 @@
+<!-- ============ SITE FOOTER  ============ -->
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="container">
+      <div class="row g-5">
+        <div class="col-lg-4">
+        <h3 class="text-white mb-3">{{ setting.system_name|default:"Moving Himalaya" }}</h3>
+        <p class="footer-desc">{{ setting.info4|default:"Moving Himalaya" }}</p>
+   
+        <div class="footer-social-modern">
+            {% if setting.facebook %}<a href="{{ setting.facebook }}" target="_blank"><i class="bi bi-facebook"></i></a>{% endif %}
+            {% if setting.instagram %}<a href="{{ setting.instagram }}" target="_blank"><i class="bi bi-instagram"></i></a>{% endif %}
+            {% if setting.youtube %}<a href="{{ setting.youtube }}" target="_blank"><i class="bi bi-youtube"></i></a>{% endif %}
+            {% if setting.twitter %}<a href="{{ setting.twitter }}" target="_blank"><i class="bi bi-twitter-x"></i></a>{% endif %}
+        </div>
+
+        </div>
+        <div class="col-lg-2 col-6">
+          <h5 class="footer-widget-title">Quick Links</h5>
+          <ul class="footer-links-modern">
+            <li><a href=""><i class="bi bi-chevron-right"></i>Home</a></li>
+            <li><a href=""><i class="bi bi-chevron-right"></i>About Us</a></li>
+            <li><a href=""><i class="bi bi-chevron-right"></i>Travel Blog</a></li>
+            <li><a href=""><i class="bi bi-chevron-right"></i>Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-6">
+          <h5 class="footer-widget-title">Top Region </h5>
+          <ul class="footer-links-modern">
+            {% for region in trekking_regions %}
+            <li><a href=""><i class="bi bi-chevron-right"></i> {{ region.name }} </a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-lg-3">
+          <h5 class="footer-widget-title">Get in Touch</h5>
+          <div class="footer-contact-info">
+
+            {% if setting.address %}
+            <div class="info-item">
+              <i class="bi bi-geo-alt-fill info-icon"></i>
+              <div class="info-text"><span>Office</span><p>{{ setting.address }}</p></div>
+            </div>
+            {% endif %}
+
+            {% if setting.email %}
+            <div class="info-item">
+              <i class="bi bi-envelope-fill info-icon"></i>
+              <div class="info-text">
+                <span>Email</span>
+                <p><a href="mailto:{{ setting.email }}">{{ setting.email }}</a></p>
+              </div>
+            </div>
+            {% endif %}
+
+
+            {% if setting.phone %}
+            <div class="info-item">
+              <i class="bi bi-telephone-fill info-icon"></i>
+              <div class="info-text">
+                <span>Phone / WhatsApp</span>
+                <p><a href="tel:{{ setting.phone|cut:' ' }}">{{ setting.phone }}</a></p>
+              </div>
+            </div>
+            {% endif %}
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="footer-experts-bar">
+    <div class="container experts-bar-inner">
+      <div class="experts-label">
+        <span><i class="bi bi-patch-check-fill" style="color:var(--accent);"></i> Talk to a trip expert:</span>
+      </div>
+      
+      <div class="experts-scroll">
+        {% for expert in footer_experts %}
+        <a href="" class="expert-card-mini">
+          <img src="{{ expert.image_url }}" 
+               alt="{{ expert.name }}" 
+               class="expert-avatar-img" 
+               style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #fff;">
+          <span class="expert-meta">
+            <strong>{{ expert.name }}</strong>
+            <span>{{ expert.get_role_display }}</span>
+          </span>
+          <i class="bi bi-chat-dots-fill"></i>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-copyright">
+    <div class="container copyright-inner">
+      <div>{{ setting.footer_copyright|default:"© 2025 Moving Himalaya. All rights reserved." }}</div>
+      <div class="copyright-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============ MOBILE APP BOTTOM BAR ============ -->
+<nav class="mobile-app-footer">
+  <a href="" class="app-footer-link active"><i class="bi bi-house-door"></i>Home</a>
+  <a href="" class="app-footer-link"><i class="bi bi-map"></i>Treks</a>
+  <a href="" class="app-footer-link"><i class="bi bi-sun"></i>Tours</a>
+  <a href="" class="app-footer-link"><i class="bi bi-headset"></i>Contact</a>
+</nav>

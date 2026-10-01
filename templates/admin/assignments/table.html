@@ -1,0 +1,45 @@
+<div class="col-12">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-success">
+                <tr>
+                    <th>Package</th>
+                    <th>Assigned Staff</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th width="120">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><strong>{{ item.package.name }}</strong></td>
+                    <td>
+                        {{ item.staff.name }} 
+                        <span class="badge bg-secondary">{{ item.staff.get_role_display }}</span>
+                    </td>
+                    <td>{{ item.start_date }}</td>
+                    <td>{{ item.end_date }}</td>
+                    <td>
+                        <span class="badge bg-{% if item.status == 'completed' %}success{% elif item.status == 'cancelled' %}danger{% else %}primary{% endif %}">
+                            {{ item.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url 'assignments:assignment_update' item.id %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                            <form action="{% url 'assignments:assignment_delete' item.id %}" method="POST" id="deleteForm{{ item.id }}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="button" class="btn btn-outline-danger" onclick="confirmDelete(event, 'deleteForm{{ item.id }}')"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No assignments found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

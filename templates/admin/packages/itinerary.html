@@ -1,0 +1,91 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Itinerary - {{ item.name }}{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'packages:package_list' %}">Packages</a></li>
+            <li class="breadcrumb-item active">Itinerary</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0">Itinerary For: {{ item.name }}</h6>
+        <a class="btn btn-light btn-sm" href="{% url 'packages:package_list' %}"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <form id="itineraryForm" action="{% url 'packages:package_itinerary' item.id %}" method="POST">
+            {% csrf_token %}
+            <div class="card shadow-none border bg-white">
+                <div class="card-body">
+                    <div class="itineraryDisplay">
+                        {% if item.itinerary_data %}
+                            {% for step in item.itinerary_data %}
+                                <div class="row mb-3 itinerary-step border-bottom pb-3">
+                                    <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="day-title mb-0 text-primary">Day {{ forloop.counter }}</h5>
+                                        <button type="button" class="btn btn-sm btn-outline-danger removeItineraryStep"><i class="bi bi-trash"></i></button>
+                                    </div>
+                                    <div class="col-md-12 mb-2"><label class="form-label small">Title</label><input type="text" class="form-control" name="title[]" value="{{ step.name }}" required></div>
+                                    <div class="col-md-12 mb-2"><label class="form-label small">Description</label><textarea class="form-control" name="content[]" rows="3" required>{{ step.content }}</textarea></div>
+                                    <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="max_elevation[]" value="{{ step.max_elevation }}" placeholder="Max Elevation"></div>
+                                    <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="duration[]" value="{{ step.duration }}" placeholder="Duration"></div>
+                                    <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="distance[]" value="{{ step.distance }}" placeholder="Distance"></div>
+                                    <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="meals[]" value="{{ step.meals }}" placeholder="Meals"></div>
+                                    <div class="col-md-12"><input type="text" class="form-control form-control-sm" name="accommodation[]" value="{{ step.accommodation }}" placeholder="Accommodation"></div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="mt-3 d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-primary addItineraryStep"><i class="bi bi-plus-circle"></i> Add Day</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn"><i class="bi bi-save"></i> Update Itinerary</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    let stepCount = {% if item.itinerary_data %}{{ item.itinerary_data|length }}{% else %}0{% endif %};
+    const template = (i) => `
+    <div class="row mb-3 itinerary-step border-bottom pb-3">
+        <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+            <h5 class="day-title mb-0 text-primary">Day ${i + 1}</h5>
+            <button type="button" class="btn btn-sm btn-outline-danger removeItineraryStep"><i class="bi bi-trash"></i></button>
+        </div>
+        <div class="col-md-12 mb-2"><label class="form-label small">Title</label><input type="text" class="form-control" name="title[]" required></div>
+        <div class="col-md-12 mb-2"><label class="form-label small">Description</label><textarea class="form-control" name="content[]" rows="3" required></textarea></div>
+        <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="max_elevation[]" placeholder="Max Elevation"></div>
+        <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="duration[]" placeholder="Duration"></div>
+        <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="distance[]" placeholder="Distance"></div>
+        <div class="col-md-3 mb-2"><input type="text" class="form-control form-control-sm" name="meals[]" placeholder="Meals"></div>
+        <div class="col-md-12"><input type="text" class="form-control form-control-sm" name="accommodation[]" placeholder="Accommodation"></div>
+    </div>`;
+
+    $('.addItineraryStep').click(() => { $('.itineraryDisplay').append(template(stepCount++)); });
+    $(document).on('click', '.removeItineraryStep', function () {
+        $(this).closest('.itinerary-step').remove();
+        $('.itinerary-step').each((i, el) => $(el).find('.day-title').text(`Day ${i + 1}`));
+        stepCount--;
+    });
+
+    $('#itineraryForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Processing...');
+        $.ajax({
+            type: 'POST', url: $(this).attr('action'), data: formData, contentType: false, processData: false,
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: (res) => { if(res.success) { toastr.success(res.message); setTimeout(() => location.reload(), 1000); } },
+            error: () => { submitBtn.prop('disabled', false).html('<i class="bi bi-save"></i> Update Itinerary'); toastr.error('Error'); }
+        });
+    });
+</script>
+{% endblock %}

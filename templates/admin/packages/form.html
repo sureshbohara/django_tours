@@ -1,0 +1,270 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}{% if item %}Edit{% else %}Create{% endif %} Package{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'packages:package_list' %}">Packages</a></li>
+            <li class="breadcrumb-item active">{% if item %}Edit{% else %}Create{% endif %}</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0">{% if item %}Update{% else %}Create{% endif %} Package</h6>
+        <a href="{% url 'packages:package_list' %}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <form id="packageForm" method="POST" enctype="multipart/form-data" action="{% if item %}{% url 'packages:package_update' item.id %}{% else %}{% url 'packages:package_create' %}{% endif %}">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3 border-bottom pb-2">Package Details</h5>
+                            <div class="row g-3">
+                                <div class="col-12"><label class="form-label">Package Name</label>{{ form.name }}</div>
+                                <div class="col-12"><label class="form-label">Short Description</label>{{ form.description }}</div>
+                                <div class="col-12"><label class="form-label">Full Content</label>{{ form.content }}</div>
+                                
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h6 class="mb-3 text-primary">🗺️ Trip Facts</h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-4"><label class="form-label">Duration</label>{{ form.duration }}</div>
+                                        <div class="col-md-4"><label class="form-label">Max Altitude</label>{{ form.max_altitude }}</div>
+                                        <div class="col-md-4"><label class="form-label">Best Season</label>{{ form.best_season }}</div>
+                                        <div class="col-md-4"><label class="form-label">Meals</label>{{ form.meals }}</div>
+                                        <div class="col-md-4"><label class="form-label">Accommodation</label>{{ form.accommodation }}</div>
+                                        <div class="col-md-4"><label class="form-label">Transportation</label>{{ form.transportation }}</div>
+                                        <div class="col-12"><label class="form-label">Trip Grading</label>{{ form.trip_grading }}</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h6 class="mb-3 text-primary"> Trip Highlights</h6>
+                                    <div class="featureDisplay">
+                                        {% if item and item.highlight_key %}
+                                            {% for highlight in item.highlight_key %}
+                                                <div class="row featureItem mb-2">
+                                                    <div class="col-10"><input type="text" name="highlight_key[]" class="form-control" value="{{ highlight }}"></div>
+                                                    <div class="col-2"><button type="button" class="btn btn-danger btn-sm removeFeature"><i class="bi bi-trash"></i></button></div>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm addFeatures"><i class="bi bi-plus-circle"></i> Add Highlight</button>
+                                </div>
+
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h6 class="mb-3 text-primary"> Travel Styles / Activities</h6>
+                                    <p class="text-muted small mb-3">Select activities that apply to this package.</p>
+                                    <div class="row g-2">
+           
+                                        {% for activity in activities %}
+                                            <div class="col-lg-3 col-md-4 col-sm-6">
+                                                <label class="activity-card border rounded p-2 d-block">
+                                                    <input type="checkbox" name="activities[]" value="{{ activity }}" {% if item and activity in item.activities %}checked{% endif %}>
+                                                    <span class="ms-2">{{ activity }}</span>
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h6 class="mb-3 text-primary"> Frequently Asked Questions</h6>
+                                    <div class="faqsDisplay">
+                                        {% if item and item.faqs %}
+                                            {% for faq in item.faqs %}
+                                                <div class="card mb-2 faqsConfiguration">
+                                                    <div class="card-body p-2">
+                                                        <div class="row">
+                                                            <div class="col-11">
+                                                                <input type="text" name="faqs[{{ forloop.counter0 }}][label]" class="form-control mb-2" placeholder="Question" value="{{ faq.label }}">
+                                                                <textarea name="faqs[{{ forloop.counter0 }}][detail]" class="form-control" rows="2" placeholder="Answer">{{ faq.detail }}</textarea>
+                                                            </div>
+                                                            <div class="col-1 d-flex align-items-start">
+                                                                <button type="button" class="btn btn-danger btn-sm removeFaqs"><i class="bi bi-trash"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    <button type="button" class="btn btn-secondary btn-sm addFaqs"><i class="bi bi-plus-circle"></i> Add FAQ</button>
+                                </div>
+
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <h6 class="mb-3 text-primary"> SEO Settings</h6>
+                                    <div class="row g-3">
+                                        <div class="col-12"><label class="form-label">Meta Title</label>{{ form.meta_title }}</div>
+                                        <div class="col-12"><label class="form-label">Meta Keywords</label>{{ form.meta_keywords }}</div>
+                                        <div class="col-12"><label class="form-label">Meta Description</label>{{ form.meta_description }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3 border-bottom pb-2"> Categories</h5>
+                            <div class="scrollable-container mb-3 p-2" style="max-height: 200px; overflow-y: auto;">
+                                {% for category in categories %}
+                                    <div class="form-check mb-1">
+                                        <input type="checkbox" class="form-check-input" name="categories" id="cat-{{ category.id }}" value="{{ category.id }}" {% if item and category in item.categories.all %}checked{% endif %}>
+                                        <label class="form-check-label fw-bold" for="cat-{{ category.id }}">{{ category.name }}</label>
+                                    </div>
+                                    {% for subCat in category.children.all %}
+                                        <div class="form-check ms-3 mb-1">
+                                            <input type="checkbox" class="form-check-input" name="categories" id="subcat-{{ subCat.id }}" value="{{ subCat.id }}" {% if item and subCat in item.categories.all %}checked{% endif %}>
+                                            <label class="form-check-label" for="subcat-{{ subCat.id }}">– {{ subCat.name }}</label>
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            </div>
+                            <div class="col-12"><label class="form-label">Short Excerpt</label>{{ form.excerpt }}</div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3 border-bottom pb-2"> Pricing</h5>
+                            <div class="row g-3">
+                                <div class="col-12"><label class="form-label">Previous Price</label>{{ form.trip_previous_price }}</div>
+                                <div class="col-12"><label class="form-label">Current Price</label>{{ form.trip_price }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3 border-bottom pb-2"> Media</h5>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label">List Image</label>
+                                    {{ form.image }}
+                                    <div class="text-center mt-2">
+                                        <img src="{% if item and item.image_url %}{{ item.image_url }}{% else %}{% static 'asset/images/noimage.png' %}{% endif %}" class="img-fluid border" id="imagePreview" style="max-height: 100px;">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Feature Image</label>
+                                    {{ form.feature_image }}
+                                    <div class="text-center mt-2">
+                                        <img src="{% if item and item.feature_image_url %}{{ item.feature_image_url }}{% else %}{% static 'asset/images/noimage.png' %}{% endif %}" class="img-fluid border" id="featureImagePreview" style="max-height: 100px;">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Gallery (Multiple)</label>
+                                    <input type="file" class="form-control" name="gallery" multiple accept="image/*">
+                                </div>
+                                {% if item and item.gallery %}
+                                    <div class="col-12">
+                                        <label class="fw-semibold small">Current Gallery:</label>
+                                        <div class="d-flex flex-wrap gap-2 mt-1">
+                                            {% for img in item.gallery %}
+                                                <div class="gallery-image" style="position:relative; display:inline-block;">
+                                                    <img src="/media/{{ img }}" width="60" height="60" style="object-fit: cover; border: 1px solid #ddd; border-radius: 4px;">
+                                                    <button type="button" class="btn btn-danger btn-sm delete-gallery-image" data-image="{{ img }}" style="position:absolute; top:-5px; right:-5px; padding: 0 4px; font-size: 10px;"><i class="bi bi-trash"></i></button>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3 border-bottom pb-2"> Settings</h5>
+                            <div class="row g-3">
+                                <div class="col-12"><label class="form-label">Display Order</label>{{ form.order_level }}</div>
+                                <div class="col-12"><label class="form-label">Display On</label>{{ form.display_on }}</div>
+                                <div class="col-12"><label class="form-label">Status</label>{{ form.status }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                        <i class="bi bi-save me-2"></i> {% if item %}Update{% else %}Create{% endif %} Package
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $('input[type="file"]').on('change', function() {
+        if (this.files && this.files[0]) {
+            let reader = new FileReader();
+            let targetId = $(this).attr('name') === 'feature_image' ? '#featureImagePreview' : '#imagePreview';
+            reader.onload = function(e) { $(targetId).attr('src', e.target.result); }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Gallery Delete
+    $(document).on('click', '.delete-gallery-image', function () {
+        if (!confirm('Delete this image?')) return;
+        var btn = this;
+        $.ajax({
+            type: 'POST', url: "{% url 'packages:package_delete_gallery_image' %}",
+            data: { 
+                image: $(this).data('image'), 
+                id: {% if item %}{{ item.id }}{% else %}0{% endif %},
+            },
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: (res) => { if(res.status===200){ toastr.success(res.msg); $(btn).closest('.gallery-image').remove(); } else toastr.error(res.msg); }
+        });
+    });
+
+    // Highlights
+    $('.addFeatures').click(() => $('.featureDisplay').append(`<div class="row featureItem mb-2"><div class="col-10"><input type="text" name="highlight_key[]" class="form-control" placeholder="Highlight"></div><div class="col-2"><button type="button" class="btn btn-danger btn-sm removeFeature"><i class="bi bi-trash"></i></button></div></div>`));
+    $(document).on('click', '.removeFeature', function() { $(this).closest('.featureItem').remove(); });
+
+    // FAQs
+    $('.addFaqs').click(() => {
+        let idx = Date.now();
+        $('.faqsDisplay').append(`<div class="card mb-2 faqsConfiguration"><div class="card-body p-2"><div class="row"><div class="col-11"><input type="text" name="faqs[${idx}][label]" class="form-control mb-2" placeholder="Question"><textarea name="faqs[${idx}][detail]" class="form-control" rows="2" placeholder="Answer"></textarea></div><div class="col-1 d-flex align-items-start"><button type="button" class="btn btn-danger btn-sm removeFaqs"><i class="bi bi-trash"></i></button></div></div></div></div>`);
+    });
+    $(document).on('click', '.removeFaqs', function() { $(this).closest('.faqsConfiguration').remove(); });
+
+    // Form Submit
+    $('#packageForm').on('submit', function(e) {
+        e.preventDefault();
+        $('.text-danger').remove(); $('.is-invalid').removeClass('is-invalid');
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        const originalText = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Processing...');
+
+        $.ajax({
+            type: 'POST', url: $(this).attr('action'), data: formData, contentType: false, processData: false,
+            headers: { 'X-CSRFToken': $('meta[name="csrf-token"]').attr('content') },
+            success: (res) => { 
+                if(res.success) { toastr.success(res.message); setTimeout(() => window.location.href = '{% url "packages:package_list" %}', 1500); } 
+            },
+            error: (xhr) => {
+                submitBtn.prop('disabled', false).html(originalText);
+                if (xhr.responseJSON?.errors) {
+                    $.each(xhr.responseJSON.errors, (field, errors) => {
+                        let selector = field === 'categories' ? 'input[name="categories"]' : `[name="${field}"]`;
+                        $(selector).first().addClass('is-invalid').after(`<div class="invalid-feedback d-block">${errors[0]}</div>`);
+                    });
+                    toastr.error('Please fix the errors');
+                } else toastr.error('Something went wrong');
+            }
+        });
+    });
+</script>
+{% endblock %}

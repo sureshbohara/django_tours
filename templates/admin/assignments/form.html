@@ -1,0 +1,65 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}{% if item %}Edit{% else %}New{% endif %} Assignment{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'assignments:assignment_list' %}">Assignments</a></li>
+            <li class="breadcrumb-item active">{% if item %}Edit{% else %}New{% endif %}</li>
+        </ol>
+    </nav>
+</div>
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0">{% if item %}Edit{% else %}New{% endif %} Assignment</h6>
+        <a href="{% url 'assignments:assignment_list' %}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <form id="assignmentForm" method="POST" action="{% if item %}{% url 'assignments:assignment_update' item.id %}{% else %}{% url 'assignments:assignment_create' %}{% endif %}">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Select Package</label>{{ form.package }}</div>
+                <div class="col-md-6"><label class="form-label">Assign Staff (Guide/Porter)</label>{{ form.staff }}</div>
+                <div class="col-md-4"><label class="form-label">Start Date</label>{{ form.start_date }}</div>
+                <div class="col-md-4"><label class="form-label">End Date</label>{{ form.end_date }}</div>
+                <div class="col-md-4"><label class="form-label">Status</label>{{ form.status }}</div>
+                <div class="col-md-12"><label class="form-label">Notes (Optional)</label>{{ form.notes }}</div>
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                        <i class="bi bi-save me-2"></i> {% if item %}Update{% else %}Create{% endif %} Assignment
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $('#assignmentForm').on('submit', function(e) {
+        e.preventDefault();
+        $('.text-danger').remove(); $('.is-invalid').removeClass('is-invalid');
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split me-1"></i> Processing...');
+        $.ajax({
+            type: 'POST', url: $(this).attr('action'), data: formData, contentType: false, processData: false,
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: function(res) {
+                if(res.success) { toastr.success(res.message); setTimeout(() => window.location.href = '{% url "assignments:assignment_list" %}', 1500); }
+            },
+            error: function(xhr) {
+                submitBtn.prop('disabled', false).html('<i class="bi bi-save me-2"></i> {% if item %}Update{% else %}Create{% endif %} Assignment');
+                if(xhr.responseJSON?.errors) {
+                    $.each(xhr.responseJSON.errors, function(field, err) {
+                        $(`[name="${field}"]`).addClass('is-invalid').after(`<div class="invalid-feedback d-block">${err[0]}</div>`);
+                    });
+                    toastr.error('Please fix the form errors');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

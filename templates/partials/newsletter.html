@@ -1,0 +1,15 @@
+<section class="footer-cta">
+  <div class="container footer-cta-inner">
+    <div class="cta-content">
+      <h3>The Himalayas, delivered to your inbox</h3>
+      <p>Get trekking tips, seasonal deals, and new trip announcements.</p>
+    </div>
+    
+    <form class="cta-form" id="newsletterForm">
+      {% csrf_token %} 
+      <input type="email" name="email" placeholder="Enter your email address" required>
+      <button type="submit" id="newsletterBtn">Subscribe</button>
+      <span id="newsletterMessage" style="display:block; margin-top:8px; font-size:13px; width:100%; text-align:center;"></span>
+    </form>
+  </div>
+</section>

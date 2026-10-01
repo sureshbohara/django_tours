@@ -1,0 +1,49 @@
+<!-- ============ BLOG ============ -->
+<section class="section blog-section">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-5">
+      <div class="section-head" style="margin-bottom:0;">
+        <h2>Travel stories &amp; trekking guides</h2>
+      </div>
+      <a href="" class="btn-ghost">View All Posts</a>
+    </div>
+    
+    <div class="blog-layout-container">
+      
+
+      {% if featured_large_post %}
+      <a href="" class="featured-blog-large" style="background-image:url('{{ featured_large_post.image_url }}');">
+        <div class="featured-blog-content">
+          <div class="featured-blog-category">{{ featured_large_post.category.name|default:"Travel" }}</div>
+          <div class="featured-blog-date">
+            <i class="bi bi-calendar3"></i> {{ featured_large_post.created_at|date:"F d, Y" }}
+          </div>
+          <h3 class="featured-blog-title">{{ featured_large_post.title }}</h3>
+          <span class="btn-sunrise">Read Article <i class="bi bi-arrow-right"></i></span>
+        </div>
+      </a>
+      {% endif %}
+
+  
+      <div class="small-blogs-column">
+        {% for post in small_posts %}
+        <div class="small-blog-card">
+          <div class="small-blog-header">
+            <span class="small-blog-category">{{ post.category.name|default:"Travel" }}</span>
+            <span class="small-blog-date">{{ post.created_at|date:"M d, Y" }}</span>
+          </div>
+          <h3 class="small-blog-title">
+            <a href="">{{ post.title }}</a>
+          </h3>
+          <a href="" class="read-more-link">
+            Read More <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center w-100">No recent blog posts available.</p>
+        {% endfor %}
+      </div>
+      
+    </div>
+  </div>
+</section>

@@ -1,0 +1,61 @@
+<!-- ============ Most Popular Treks in Nepal ============ -->
+<section class="premium-expedition-section" {% if setting.bg_image %}style="background-image: url('{{ setting.bg_image.url }}'); background-size: cover; background-position: center; background-attachment: fixed;"{% endif %}>
+  
+  <div class="premium-overlay"></div>
+  <div class="container position-relative z-2">
+    <div class="section-head center mx-auto text-white mb-5">
+      <h2 class="text-white">Most Popular Treks in Nepal</h2>
+      <p class="text-white-50">Handcrafted, high-end experiences for the discerning adventurer.</p>
+    </div>
+    
+    <div class="swiper premium-expedition-swiper pb-5">
+      <div class="swiper-wrapper">
+        
+        {% for package in popular_packages %}
+        <div class="swiper-slide">
+          <div class="expedition-card premium-card">
+            <div class="expedition-img">
+                <img src="{{ package.image_url }}" alt="{{ package.name }}">
+            </div>
+            <div class="expedition-body">
+              <h3 class="expedition-title">{{ package.name }}</h3>
+              <div class="expedition-meta">
+                {% if package.max_altitude %}
+                <span class="meta-item"><i class="bi bi-arrows-fullscreen"></i> Max. Elev: {{ package.max_altitude }}</span>
+                {% endif %}
+                {% if package.best_season %}
+                <span class="meta-item"><i class="bi bi-calendar-event"></i> Season: {{ package.best_season }}</span>
+                {% endif %}
+                {% if package.duration %}
+                <span class="meta-item"><i class="bi bi-clock"></i> Duration: {{ package.duration }}</span>
+                {% endif %}
+                {% if package.trip_grading %}
+                <span class="meta-item"><i class="bi bi-bar-chart-line"></i> Grading: {{ package.trip_grading }}</span>
+                {% endif %}
+              </div>
+              <div class="expedition-footer">
+                <div>
+                    <span class="price-label">Starting from</span>
+                    <span class="new-price">€{{ package.trip_price|default:"0" }}</span>
+                </div>
+                <a href="{% url 'front:package_detail' package.slug %}" class="btn-sunrise" style="padding: 8px 16px; font-size: 12px;">View Details</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="swiper-slide">
+          <div class="expedition-card premium-card">
+            <div class="expedition-body text-center p-5">
+              <h3 class="text-white">No Popular Treks Available</h3>
+              <p class="text-white-50">Please mark some packages as 'Popular' from the Admin Panel.</p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,50 @@
+<!-- ============ TESTIMONIALS  ============ -->
+<section class="section review-section">
+  <div class="container">
+    <div class="section-head center mx-auto">
+      <h2>What our trekkers say</h2>
+      <p>Real experiences from real adventurers who traveled with Moving Himalaya.</p>
+    </div>
+    
+    <div class="testimonial-grid">
+      
+      {% for review in latest_reviews %}
+      <div class="testimonial-card">
+        
+        <div class="stars">
+          {% for i in "12345"|make_list %}
+            {% if forloop.counter <= review.rating %}
+              <i class="bi bi-star-fill"></i>
+            {% else %}
+              <i class="bi bi-star"></i>
+            {% endif %}
+          {% endfor %}
+        </div>
+        
+        <p class="quote">"{{ review.review }}"</p>
+        
+        <div class="client-section">
+          <div class="client-initials" style="background: var(--primary);">
+            {{ review.name|slice:":2"|upper }}
+          </div>
+          <div>
+            <div class="client-name">
+              {{ review.name }} <i class="bi bi-patch-check-fill verified-icon"></i>
+            </div>
+            <div class="client-role">
+              {{ review.address|default:"Happy Trekker" }}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% empty %}
+
+      <div class="col-12 text-center text-muted py-5">
+        <p>No reviews available at the moment. Be the first to share your experience!</p>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>

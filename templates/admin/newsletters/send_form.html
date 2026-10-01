@@ -1,0 +1,77 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block title %}Send Newsletter{% endblock %}
+{% block content %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0 p-0">
+            <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'newsletters:subscriber_list' %}">Subscribers</a></li>
+            <li class="breadcrumb-item active">Send Newsletter</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-custom text-white d-flex align-items-center justify-content-between py-2">
+        <h6 class="mb-0"> Compose Newsletter</h6>
+        <a href="{% url 'newsletters:subscriber_list' %}" class="btn btn-light btn-sm"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card-body bg-light p-3">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i> This email will be sent to <strong>ALL active subscribers</strong>.
+        </div>
+
+        <form id="newsletterForm" method="POST" action="{% url 'newsletters:send_newsletter' %}">
+            {% csrf_token %}
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label fw-bold">Email Subject</label>
+                    {{ form.subject }}
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-bold">Email Message</label>
+                    {{ form.message }}
+                </div>
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                        <i class="bi bi-send me-2"></i> Send to All Subscribers
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $('#newsletterForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = $('#submitBtn');
+        
+        submitBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split me-1"></i> Sending Emails... Please wait...');
+        
+        $.ajax({
+            type: 'POST', 
+            url: $(this).attr('action'), 
+            data: formData, 
+            headers: {'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')},
+            success: function(res) {
+                if(res.success) { 
+                    toastr.success(res.message); 
+                    setTimeout(() => window.location.href = '{% url "newsletters:subscriber_list" %}', 2000); 
+                } else {
+                    submitBtn.prop('disabled', false).html('<i class="bi bi-send me-2"></i> Send to All Subscribers');
+                    toastr.error(res.message || 'Failed to send emails.');
+                }
+            },
+            error: function(xhr) {
+                submitBtn.prop('disabled', false).html('<i class="bi bi-send me-2"></i> Send to All Subscribers');
+                toastr.error('Server error. Please try again.');
+            }
+        });
+    });
+</script>
+{% endblock %}
